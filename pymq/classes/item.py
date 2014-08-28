@@ -5,19 +5,13 @@ class MessageItem(object):
 		self.eid = None
 
 		self.dat = None
-		self.obj = None
 
 		self.init_time = None
 		self.drop_time = None
 
-		self._filename = None
+		self.__dict__.update(kwargs)
+		super(MessageItem, self).__init__()
 
-		super(MessageItem, self).__init__(*args, **kwargs)
-
-	@property
-	def filename(self):
-		if(self.eid == None):
-			raise(AttributeError)
-		if(self._filename == None):
-			self._filename = '%s/%s' % (TMP_DIR, self.eid)
-		return(self._filename)
+	# tell the server that we are successful
+	def callback(self, *args, **kwargs):
+		pass

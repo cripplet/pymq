@@ -1,7 +1,5 @@
 all: clean
-	@python2 -m unittest discover
-	@python3 -m unittest discover
-	@make clean
+	@python2 -m unittest discover; python3 -m unittest discover; make clean
 
 clean:
 	@rm -rf pymq/*pyc
