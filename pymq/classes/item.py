@@ -1,0 +1,2 @@
+class MessageItem(object):
+	pass
