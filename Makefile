@@ -1,6 +1,6 @@
 all: clean
-	@python2 bin/run_tests.py
-	@python3 bin/run_tests.py
+	@python2 -m unittest discover
+	@python3 -m unittest discover
 	@make clean
 
 clean:

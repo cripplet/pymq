@@ -12,10 +12,12 @@ class MessageItem(object):
 
 		self._filename = None
 
-		super(MessageItem).__init__(*args, **kwargs)
+		super(MessageItem, self).__init__(*args, **kwargs)
 
 	@property
 	def filename(self):
+		if(self.eid == None):
+			raise(AttributeError)
 		if(self._filename == None):
 			self._filename = '%s/%s' % (TMP_DIR, self.eid)
 		return(self._filename)
