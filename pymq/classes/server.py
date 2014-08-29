@@ -10,6 +10,7 @@ from pymq.settings import VERSION as V
 class MessageServer(object):
 	def __init__(self, *args, **kwargs):
 		self.host = None
+		self.port = PORT
 		self.__dict__.update(kwargs)
 		self.incoming = []
 		self._server = None	# listen for incoming connections
@@ -19,7 +20,7 @@ class MessageServer(object):
 	def start(self):
 		self._server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		self._server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-		self._server.bind((HOST, PORT))
+		self._server.bind((HOST, self.port))
 		self._server.listen(MAX_CLIENTS)
 		self.accept()
 
@@ -31,10 +32,12 @@ class MessageServer(object):
 			r, w, e = select.select([ self._server ], [], [], 1)
 			if(r):
 				c, a = self._server.accept()
+				print(a)
 				buf = ''
 				msg = ''
 				length = None
 				while(length == None):
+					print('while len == None')
 					buf += str(c.recv(1024))
 					if(buf == ''):
 						break
@@ -43,6 +46,8 @@ class MessageServer(object):
 						length = int(l)
 						msg = buf[:length]
 						length -= len(buf)
+						if(length < 0):
+							raise(KeyError)
 						break
 				while(length > 0):
 					buf = c.recv(1024)
@@ -51,7 +56,8 @@ class MessageServer(object):
 					msg += buf[:length]
 					length -= len(buf)
 				print(msg)
-				self.incoming.append(c)
+				c.shutdown(0)
+				c.close()
 		self._stop_flag = False
 
 	def send(self, msg, host=None):
@@ -79,8 +85,5 @@ class MessageServer(object):
 		# wait for the final loop
 		while(self._stop_flag):
 			pass
-		for c in self.incoming:
-			c.shutdown(0)
-			c.close()
 		self._server.shutdown(0)
 		self._server.close()
