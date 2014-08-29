@@ -7,5 +7,5 @@ class TestServerBasic(unittest.TestCase):
 		self.s = MessageServer()
 
 	def test_init(self):
-		self.s.start(1)
+		self.s.start(10)
 		self.s.stop()
