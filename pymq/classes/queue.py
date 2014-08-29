@@ -24,10 +24,11 @@ class MessageQueue(object):
 		super(MessageQueue, self).__init__()
 
 	def push(self, val):
-		self.q.put(val)
 		self.cleanup()
+		self.q.put(val)
 
 	def pop(self):
+		self.cleanup()
 		if(self.q.empty()):
 			return(None)
 		else:
@@ -36,14 +37,13 @@ class MessageQueue(object):
 			val.drop_time = val.init_time + self.delta
 			self.p[val.eid] = val
 			return(val)
-		self.cleanup()
 
 	def confirm(self, eid):
+		self.cleanup()
 		try:
 			self.p.pop(eid)
 		except KeyError:
 			pass
-		self.cleanup()
 
 	def invalidate(self, eid):
 		try:
@@ -54,7 +54,7 @@ class MessageQueue(object):
 	def cleanup(self):
 		if(self.clock + self.delta > time.time()):
 			return
-		for k, v in self.p.items():
-			if(v.drop_time > (self.clock + self.delta)):
+		for k in list(self.p):
+			if(self.p[k].drop_time > (self.clock + self.delta)):
 				self.invalidate(k)
 		self.clock = time.time()
