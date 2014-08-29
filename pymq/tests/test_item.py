@@ -4,7 +4,8 @@ from pymq.classes.item import MessageItem
 
 class TestItemBasic(unittest.TestCase):
 	def setUp(self):
-		self.i = MessageItem()
+		self.i = MessageItem(eid='unique')
 
 	def test_init(self):
-		pass
+		self.assertEqual(self.i, MessageItem(eid='unique'))
+		self.assertNotEqual(self.i, MessageItem(eid='not_unique'))

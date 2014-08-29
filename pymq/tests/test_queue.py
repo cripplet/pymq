@@ -11,5 +11,6 @@ class TestQueueBasic(unittest.TestCase):
 		pass
 
 	def test_push(self):
+		self.assertEqual(self.q.pop(), None)
 		self.q.push(MessageItem(eid=1111))
-		self.assertEqual(self.q.pop().eid, 1111)
+		self.assertEqual(self.q.pop(), MessageItem(eid=1111))
