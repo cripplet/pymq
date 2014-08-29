@@ -1,4 +1,4 @@
-all: clean
+test: clean
 	@python2 -m unittest discover; python3 -m unittest discover; make clean
 
 clean:
