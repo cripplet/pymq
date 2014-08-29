@@ -35,7 +35,8 @@ class MessageQueue(object):
 			val = self.q.get()
 			val.init_time = time.time()
 			val.drop_time = val.init_time + self.delta
-			self.p[val.eid] = val
+			if(self.delta > 0):
+				self.p[val.eid] = val
 			return(val)
 
 	def confirm(self, eid):
