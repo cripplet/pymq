@@ -1,5 +1,6 @@
 import select
 import socket
+import sys
 
 from pymq.settings import HOST as HOST
 from pymq.settings import MAX_CLIENTS as MAX_CLIENTS
@@ -30,7 +31,26 @@ class MessageServer(object):
 			r, w, e = select.select([ self._server ], [], [], 1)
 			if(r):
 				c, a = self._server.accept()
-				buffer = c.recv(100)
+				buf = ''
+				msg = ''
+				length = None
+				while(length == None):
+					buf += str(c.recv(1024))
+					if(buf == ''):
+						break
+					if(':' in str(buf)):
+						l, throwaway, buf = buf.partition(':')
+						length = int(l)
+						msg = buf[:length]
+						length -= len(buf)
+						break
+				while(length > 0):
+					buf = c.recv(1024)
+					if(buf == ''):
+						break
+					msg += buf[:length]
+					length -= len(buf)
+				print(msg)
 				self.incoming.append(c)
 		self._stop_flag = False
 
@@ -43,6 +63,7 @@ class MessageServer(object):
 		if(not self._client):
 			raise(KeyError)
 		self._client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+		self._client.send('%s:' % str(len(msg)))
 		if(V == 2):
 			self._client.send(msg)
 		else:
